@@ -5,6 +5,7 @@ from typing import List
 from .. import models, schemas
 from ..database import get_db
 from ..auth.jwt_auth import get_current_user
+from ..ai import openai_integration 
 
 router = APIRouter()
 
