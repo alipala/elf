@@ -2,6 +2,7 @@ import openai
 from fastapi import HTTPException
 import os
 from dotenv import load_dotenv
+from typing import List 
 
 load_dotenv()
 
@@ -36,6 +37,23 @@ async def generate_tutor_response(user_message: str, conversation_history: list,
             temperature=0.7,
         )
         
+        return response.choices[0].message['content'].strip()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(e)}")
+
+async def generate_summary(messages: List[str]):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an AI assistant tasked with summarizing conversations."},
+                {"role": "user", "content": f"Please summarize the following conversation:\n\n{' '.join(messages)}"}
+            ],
+            max_tokens=100,
+            n=1,
+            stop=None,
+            temperature=0.7,
+        )
         return response.choices[0].message['content'].strip()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(e)}")
